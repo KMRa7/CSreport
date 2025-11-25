@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>日報フォーム（自動整形＆コピー）</title>
+  <style>
+    :root {
+      --bg-gradient-start: #eef2ff;
+      --bg-gradient-end: #fdf2ff;
+      --card-bg: #ffffff;
+      --accent: #4f46e5;
+      --accent-soft: #e0e7ff;
+      --border-soft: #e5e7eb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --radius-lg: 16px;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 32px 16px 40px;
+      background: radial-gradient(circle at top left, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text-main);
+    }
+
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 0 0 4px;
+      letter-spacing: 0.03em;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* タブボタン */
+    .tab-bar-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .tab-bar {
+      display: inline-flex;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(12px);
+    }
+
+    .tab-bar button {
+      appearance: none;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    }
+
+    .tab-bar button span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--border-soft);
+    }
+
+    .tab-bar button:hover {
+      background: #f9fafb;
+      transform: translateY(-1px);
+    }
+
+    .tab-bar button.active {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .tab-bar button.active span.dot {
+      background: #a5b4fc;
+    }
+
+    /* カード */
+    .container {
+      margin-top: 8px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      display: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .card.is-active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .card-header h2 {
+      font-size: 18px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--accent-soft);
+      color: #4b5563;
+      background: #f9fafb;
+    }
+
+    .card-header .hint {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* 入力系 */
+    .field-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    label {
+      font-size: 13px;
+      white-space: nowrap;
+      color: #374151;
+      min-width: 52px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 7px 9px;
+      font-size: 13px;
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
+      background: #f9fafb;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.3);
+    }
+
+    .section-title {
+      margin-top: 14px;
+      font-weight: 600;
+      font-size: 13px;
+      border-left: 3px solid var(--accent);
+      padding-left: 8px;
+      color: #111827;
+    }
+
+    .section-title span.small {
+      display: block;
+      font-weight: normal;
+      margin-top: 2px;
+    }
+
+    .sub-label {
+      font-size: 12px;
+      margin-top: 6px;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+    }
+
+    .inline-3 {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      column-gap: 6px;
+      row-gap: 4px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .inline-3 span.prefix {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .small {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    textarea.output {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 260px;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 12px;
+      border: 1px dashed rgba(148, 163, 184, 0.9);
+      background: #f9fafb;
+      font-family: "Meiryo", system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+      color: #111827;
+    }
+
+    textarea.output:focus {
+      outline: none;
+      border-style: solid;
+      border-color: var(--accent);
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.25);
+    }
+
+    /* ボタン */
+    .actions {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      appearance: none;
+      border-radius: 999px;
+      border: none;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      color: #ffffff;
+      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow: 0 16px 35px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 24px rgba(79, 70, 229, 0.32);
+    }
+
+    .btn-primary .emoji {
+      font-size: 14px;
+    }
+
+    .btn-secondary {
+      appearance: none;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      padding: 5px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #ffffff;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      transition: background 0.15s ease, color 0.15s ease,
+                  box-shadow 0.15s ease, transform 0.08s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #f9fafb;
+      color: #374151;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(148, 163, 184, 0.4);
+    }
+
+    .btn-secondary:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 10px rgba(148, 163, 184, 0.3);
+    }
+
+    .msg {
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    hr {
+      margin: 16px 0 10px;
+      border: none;
+      border-top: 1px dashed rgba(148, 163, 184, 0.6);
+    }
+
+    /* 4件目以降の店舗ブロック */
+    .store-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .store-header .store-index {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .btn-delete-store {
+      appearance: none;
+      border-radius: 999px;
+      border: none;
+      padding: 2px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      background: #fee2e2;
+      color: #b91c1c;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s ease, transform 0.08s ease, box-shadow 0.1s ease;
+    }
+
+    .btn-delete-store:hover {
+      background: #fecaca;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(248, 113, 113, 0.5);
+    }
+
+    .btn-delete-store:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(248, 113, 113, 0.5);
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 18px 14px;
+      }
+      .tab-bar {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .tab-bar button {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>日報フォーム</h1>
+    <div class="subtitle">フォームに入力 → 「生成してコピー」ボタンでフォーマット済みテキストを自動生成＆コピーします。</div>
+
+    <!-- タブボタン -->
+    <div class="tab-bar-wrapper">
+      <div class="tab-bar">
+        <button type="button" id="btn-front" onclick="showForm('front')">
+          <span class="dot"></span>
+          <span>（フロント）</span>
+        </button>
+        <button type="button" id="btn-back" onclick="showForm('back')">
+          <span class="dot"></span>
+          <span>（フロント以外）</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- フロント用 -->
+      <div class="card" id="front-card">
+        <div class="card-header">
+          <h2>
+            （フロント用）
+            <span class="badge">Front</span>
+          </h2>
+          <span class="hint">MTG店舗ベースの日報用フォーマット</span>
+        </div>
+
+        <div class="field-row">
+          <label for="front-date">日付：</label>
+          <input type="text" id="front-date" placeholder="例）2025/11/20">
+        </div>
+        <div class="field-row">
+          <label for="front-name">氏名：</label>
+          <input type="text" id="front-name" placeholder="氏名を入力">
+        </div>
+
+        <div class="section-title">
+          ■ 本日のMTG店舗
+          <span class="small">最大3店舗分（＋ボタンで4件目以降を追加できます）</span>
+        </div>
+
+        <!-- 店舗1〜3（固定） -->
+        <div class="sub-label">1件目</div>
+        <div class="field-row">
+          <label>店舗名：</label>
+          <input type="text" id="front-store1-name">
+        </div>
+        <div class="field-row">
+          <label>課題・提案：</label>
+          <input type="text" id="front-store1-issue">
+        </div>
+
+        <div class="sub-label">2件目</div>
+        <div class="field-row">
+          <label>店舗名：</label>
+          <input type="text" id="front-store2-name">
+        </div>
+        <div class="field-row">
+          <label>課題・提案：</label>
+          <input type="text" id="front-store2-issue">
+        </div>
+
+        <div class="sub-label">3件目</div>
+        <div class="field-row">
+          <label>店舗名：</label>
+          <input type="text" id="front-store3-name">
+        </div>
+        <div class="field-row">
+          <label>課題・提案：</label>
+          <input type="text" id="front-store3-issue">
+        </div>
+
+        <div class="small">※ 4件目以降は「＋ 店舗を追加」ボタンで入力欄を増やせます。</div>
+
+        <!-- 4件目以降を追加するコンテナ -->
+        <div id="front-extra-stores"></div>
+        <button type="button" class="btn-secondary" onclick="addFrontStore()">＋ 店舗を追加</button>
+
+        <div class="section-title">
+          ■ 本日の成果・進捗
+          <span class="small">（更新・MTG設定など自分なりの成果）</span>
+        </div>
+        <div class="inline-3">
+          <span class="prefix">・</span><input type="text" id="front-result1">
+          <span class="prefix">・</span><input type="text" id="front-result2">
+          <span class="prefix">・</span><input type="text" id="front-result3">
+        </div>
+
+        <div class="section-title">
+          ■ 課題・問題点
+          <span class="small">（個人の課題・問題点）</span>
+        </div>
+        <div class="inline-3">
+          <span class="prefix">・</span><input type="text" id="front-issue1">
+          <span class="prefix">・</span><input type="text" id="front-issue2">
+          <span class="prefix">・</span><input type="text" id="front-issue3">
+        </div>
+
+        <div class="section-title">
+          ■ 明日の予定
+          <span class="small">（MTG/MTG外の動き）</span>
+        </div>
+        <div class="inline-3">
+          <span class="prefix">1.</span><input type="text" id="front-plan1">
+          <span class="prefix">2.</span><input type="text" id="front-plan2">
+          <span class="prefix">3.</span><input type="text" id="front-plan3">
+        </div>
+
+        <div class="section-title">
+          ■ 本日の気づき・振り返り
+          <span class="small">（学び・改善点など）</span>
+        </div>
+        <div class="inline-3">
+          <span class="prefix">・</span><input type="text" id="front-ref1">
+          <span class="prefix">・</span><input type="text" id="front-ref2">
+          <span class="prefix">・</span><input type="text" id="front-ref3">
+        </div>
+
+        <hr>
+
+        <div class="small">▼ 生成されたテキスト（自動整形）</div>
+        <textarea id="front-output" class="output" readonly></textarea>
+        <div class="actions">
+          <button class="btn-primary" onclick="generateAndCopyFront()">
+            <span class="emoji">📝</span>
+            <span>フロント用を生成してコピー</span>
+          </button>
+          <span id="front-msg" class="msg"></span>
+        </div>
+      </div>
+
+      <!-- フロント以外用 -->
+      <div class="card" id="back-card">
+        <div class="card-header">
+          <h2>
+            （フロント以外用）
+            <span class="badge">Back / Office</span>
+          </h2>
+          <span class="hint">バックオフィス・その他業務の日報用フォーマット</span>
+        </div>
+
+        <div class="field-row">
+          <label for="back-date">日付：</label>
+          <input type="text" id="back-date" placeholder="例）2025/11/20">
+        </div>
+        <div class="field-row">
+          <label for="back-name">氏名：</label>
+          <input type="text" id="back-name" placeholder="氏名を入力">
+        </div>
+
+        <div class="section-title">■ 本日の業務内容</div>
+        <div class="inline-3">
+          <span class="prefix">1.</span><input type="text" id="back-work1">
+          <span class="prefix">2.</span><input type="text" id="back-work2">
+          <span class="prefix">3.</span><input type="text" id="back-work3">
+        </div>
+
+        <div class="section-title">■ 本日の成果・進捗</div>
+        <div class="inline-3">
+          <span class="prefix">・</span><input type="text" id="back-result1">
+          <span class="prefix">・</span><input type="text" id="back-result2">
+          <span class="prefix">・</span><input type="text" id="back-result3">
+        </div>
+
+        <div class="section-title">■ 課題・問題点</div>
+        <div class="inline-3">
+          <span class="prefix">・</span><input type="text" id="back-issue1">
+          <span class="prefix">・</span><input type="text" id="back-issue2">
+          <span class="prefix">・</span><input type="text" id="back-issue3">
+        </div>
+
+        <div class="section-title">■ 明日の予定</div>
+        <div class="inline-3">
+          <span class="prefix">1.</span><input type="text" id="back-plan1">
+          <span class="prefix">2.</span><input type="text" id="back-plan2">
+          <span class="prefix">3.</span><input type="text" id="back-plan3">
+        </div>
+
+        <div class="section-title">■ 気づき・振り返り（学び・改善点など）</div>
+        <div class="inline-3">
+          <span class="prefix">・</span><input type="text" id="back-ref1">
+          <span class="prefix">・</span><input type="text" id="back-ref2">
+          <span class="prefix">・</span><input type="text" id="back-ref3">
+        </div>
+
+        <hr>
+
+        <div class="small">▼ 生成されたテキスト（自動整形）</div>
+        <textarea id="back-output" class="output" readonly></textarea>
+        <div class="actions">
+          <button class="btn-primary" onclick="generateAndCopyBack()">
+            <span class="emoji">📋</span>
+            <span>フロント以外用を生成してコピー</span>
+          </button>
+          <span id="back-msg" class="msg"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // 対象フィールド一覧（保存・復元用）
+  const FRONT_FIELDS = [
+    "front-date","front-name",
+    "front-store1-name","front-store1-issue",
+    "front-store2-name","front-store2-issue",
+    "front-store3-name","front-store3-issue",
+    "front-result1","front-result2","front-result3",
+    "front-issue1","front-issue2","front-issue3",
+    "front-plan1","front-plan2","front-plan3",
+    "front-ref1","front-ref2","front-ref3"
+  ];
+
+  const BACK_FIELDS = [
+    "back-date","back-name",
+    "back-work1","back-work2","back-work3",
+    "back-result1","back-result2","back-result3",
+    "back-issue1","back-issue2","back-issue3",
+    "back-plan1","back-plan2","back-plan3",
+    "back-ref1","back-ref2","back-ref3"
+  ];
+
+  // 自動保存対象（※日付・名前は除外）
+  const FRONT_SAVE_FIELDS = FRONT_FIELDS.filter(
+    id => id !== "front-date" && id !== "front-name"
+  );
+  const BACK_SAVE_FIELDS = BACK_FIELDS.filter(
+    id => id !== "back-date" && id !== "back-name"
+  );
+
+  // ▼ フォーム切り替え
+  function showForm(type) {
+    const frontCard = document.getElementById("front-card");
+    const backCard  = document.getElementById("back-card");
+    const btnFront  = document.getElementById("btn-front");
+    const btnBack   = document.getElementById("btn-back");
+
+    if (type === "front") {
+      frontCard.classList.add("is-active");
+      backCard.classList.remove("is-active");
+      btnFront.classList.add("active");
+      btnBack.classList.remove("active");
+    } else if (type === "back") {
+      frontCard.classList.remove("is-active");
+      backCard.classList.add("is-active");
+      btnFront.classList.remove("active");
+      btnBack.classList.add("active");
+    }
+
+    // ★ 最後に開いたタブを保存
+    try {
+      localStorage.setItem("nippoLastTab", type);
+    } catch (e) {
+      console.error("タブ状態の保存に失敗しました", e);
+    }
+  }
+
+  // 共通：入力値取得のヘルパー
+  function v(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : "";
+  }
+
+  // 共通：箇条書き（・）を組み立て
+  function buildBullets(ids) {
+    const lines = [];
+    ids.forEach(id => {
+      const value = v(id);
+      if (value) {
+        lines.push("・" + value);
+      }
+    });
+    return lines.join("\n");
+  }
+
+  // 共通：番号付き 1. 2. 3. を組み立て
+  function buildNumbered(ids) {
+    const lines = [];
+    ids.forEach((id, index) => {
+      const value = v(id);
+      if (value) {
+        lines.push((index + 1) + ".");
+        lines.push(value);
+        lines.push(""); // 1件ごとに空行
+      }
+    });
+    return lines.join("\n").replace(/\n$/, ""); // 最後の余分な改行を調整
+  }
+
+  // ===== フロント MTG 4件目以降の動的追加 =====
+  function addFrontStore(nameValue = "", issueValue = "") {
+    const container = document.getElementById("front-extra-stores");
+    if (!container) return;
+
+    const currentCount = container.querySelectorAll(".front-extra-store-block").length;
+    const index = currentCount + 4; // 4件目からスタート
+
+    const block = document.createElement("div");
+    block.className = "front-extra-store-block";
+
+    block.innerHTML = `
+      <div class="store-header">
+        <span class="sub-label store-index">${index}件目</span>
+        <button type="button" class="btn-delete-store" onclick="removeFrontStore(this)">削除</button>
+      </div>
+      <div class="field-row">
+        <label>店舗名：</label>
+        <input type="text"
+               id="front-store${index}-name"
+               data-store-extra="name">
+      </div>
+      <div class="field-row">
+        <label>課題・提案：</label>
+        <input type="text"
+               id="front-store${index}-issue"
+               data-store-extra="issue">
+      </div>
+    `;
+
+    container.appendChild(block);
+
+    const nameInput  = block.querySelector('input[data-store-extra="name"]');
+    const issueInput = block.querySelector('input[data-store-extra="issue"]');
+
+    if (nameInput)  nameInput.value  = nameValue || "";
+    if (issueInput) issueInput.value = issueValue || "";
+
+    // 動的追加分も自動保存の対象に
+    [nameInput, issueInput].forEach(el => {
+      if (!el) return;
+      el.addEventListener("change", saveFrontForm);
+    });
+  }
+
+  function getExtraStores() {
+    const container = document.getElementById("front-extra-stores");
+    if (!container) return [];
+    const blocks = container.querySelectorAll(".front-extra-store-block");
+    const stores = [];
+    blocks.forEach(block => {
+      const nameInput  = block.querySelector('input[data-store-extra="name"]');
+      const issueInput = block.querySelector('input[data-store-extra="issue"]');
+      const name  = nameInput  ? nameInput.value.trim()  : "";
+      const issue = issueInput ? issueInput.value.trim() : "";
+      stores.push({ name, issue });
+    });
+    return stores;
+  }
+
+  function clearFrontExtraStores() {
+    const container = document.getElementById("front-extra-stores");
+    if (!container) return;
+    container.innerHTML = "";
+  }
+
+  function renumberFrontExtraStores() {
+    const container = document.getElementById("front-extra-stores");
+    if (!container) return;
+    const blocks = container.querySelectorAll(".front-extra-store-block");
+    blocks.forEach((block, i) => {
+      const label = block.querySelector(".store-index");
+      if (label) {
+        label.textContent = `${i + 4}件目`;
+      }
+    });
+  }
+
+  function removeFrontStore(buttonEl) {
+    const block = buttonEl.closest(".front-extra-store-block");
+    if (!block) return;
+    block.remove();
+    renumberFrontExtraStores();
+    saveFrontForm(); // 削除後の状態を保存
+  }
+
+  // ==== フロント用 保存・復元 ====
+  function getFrontKey() {
+    const date = v("front-date");
+    const name = v("front-name");
+    if (!date || !name) return null;
+    return `nippo_front_${date}_${name}`;
+  }
+
+  function clearFrontFormExceptKey() {
+    FRONT_FIELDS.forEach(id => {
+      if (id === "front-date" || id === "front-name") return;
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+    clearFrontExtraStores();
+    const out = document.getElementById("front-output");
+    if (out) out.value = "";
+  }
+
+  function saveFrontForm() {
+    const key = getFrontKey();
+    if (!key) return;
+
+    const data = {};
+    FRONT_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+
+    // 4件目以降
+    data.extraStores = getExtraStores();
+
+    const out = document.getElementById("front-output");
+    data.frontOutput = out ? out.value : "";
+
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+      console.error("フロント用データの保存に失敗しました", e);
+    }
+  }
+
+  function restoreFrontForm() {
+    const key = getFrontKey();
+    if (!key) return;
+
+    let raw = null;
+    try {
+      raw = localStorage.getItem(key);
+    } catch (e) {
+      console.error("フロント用データの取得に失敗しました", e);
+    }
+    if (!raw) {
+      // 保存データがなければ、その日付＆名前用として空にする
+      clearFrontFormExceptKey();
+      return;
+    }
+
+    try {
+      const data = JSON.parse(raw);
+      FRONT_FIELDS.forEach(id => {
+        if (data[id] !== undefined) {
+          const el = document.getElementById(id);
+          if (el) el.value = data[id];
+        }
+      });
+
+      clearFrontExtraStores();
+      if (Array.isArray(data.extraStores)) {
+        data.extraStores.forEach(store => {
+          addFrontStore(store.name || "", store.issue || "");
+        });
+        renumberFrontExtraStores();
+      }
+
+      if (data.frontOutput !== undefined) {
+        const out = document.getElementById("front-output");
+        if (out) out.value = data.frontOutput;
+      }
+    } catch (e) {
+      console.error("フロント用データの復元に失敗しました", e);
+    }
+  }
+
+  // ==== フロント以外用 保存・復元 ====
+  function getBackKey() {
+    const date = v("back-date");
+    const name = v("back-name");
+    if (!date || !name) return null;
+    return `nippo_back_${date}_${name}`;
+  }
+
+  function clearBackFormExceptKey() {
+    BACK_FIELDS.forEach(id => {
+      if (id === "back-date" || id === "back-name") return;
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+    const out = document.getElementById("back-output");
+    if (out) out.value = "";
+  }
+
+  function saveBackForm() {
+    const key = getBackKey();
+    if (!key) return;
+
+    const data = {};
+    BACK_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+    const out = document.getElementById("back-output");
+    data.backOutput = out ? out.value : "";
+
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+      console.error("フロント以外用データの保存に失敗しました", e);
+    }
+  }
+
+  function restoreBackForm() {
+    const key = getBackKey();
+    if (!key) return;
+
+    let raw = null;
+    try {
+      raw = localStorage.getItem(key);
+    } catch (e) {
+      console.error("フロント以外用データの取得に失敗しました", e);
+    }
+    if (!raw) {
+      clearBackFormExceptKey();
+      return;
+    }
+
+    try {
+      const data = JSON.parse(raw);
+      BACK_FIELDS.forEach(id => {
+        if (data[id] !== undefined) {
+          const el = document.getElementById(id);
+          if (el) el.value = data[id];
+        }
+      });
+      if (data.backOutput !== undefined) {
+        const out = document.getElementById("back-output");
+        if (out) out.value = data.backOutput;
+      }
+    } catch (e) {
+      console.error("フロント以外用データの復元に失敗しました", e);
+    }
+  }
+
+  // フロント用テキスト生成
+  function buildFrontText() {
+    const lines = [];
+
+    lines.push("【日付】      ：" + v("front-date"));
+    lines.push("【氏名】      ：" + v("front-name"));
+    lines.push("");
+    lines.push("――――――――――――――――――");
+    lines.push("■ 本日のMTG店舗");
+
+    // 店舗情報（固定1〜3件）
+    const stores = [
+      { name: v("front-store1-name"), issue: v("front-store1-issue") },
+      { name: v("front-store2-name"), issue: v("front-store2-issue") },
+      { name: v("front-store3-name"), issue: v("front-store3-issue") }
+    ];
+
+    // 4件目以降（動的）
+    const extra = getExtraStores();
+    extra.forEach(s => stores.push(s));
+
+    let storeIndex = 1;
+    stores.forEach(s => {
+      if (s.name || s.issue) {
+        lines.push(storeIndex + ".");
+        lines.push("店舗名：" + (s.name || ""));
+        lines.push("課題・提案内容：" + (s.issue || ""));
+        lines.push("");
+        storeIndex++;
+      }
+    });
+
+    if (storeIndex === 1) {
+      // 1件も入力がない場合は、ひな形だけ出す
+      lines.push("1.");
+      lines.push("店舗名：");
+      lines.push("課題・提案内容：");
+      lines.push("");
+      lines.push("2.");
+      lines.push("店舗名：");
+      lines.push("課題・提案内容：");
+      lines.push("");
+      lines.push("3.");
+      lines.push("店舗名：");
+      lines.push("課題・提案内容：");
+      lines.push("");
+    }
+
+    lines.push("(ある分追加してください)");
+    lines.push("――――――――――――――――――");
+    lines.push("■ 本日の成果・進捗(更新・MTG設定など自分なりの成果)");
+
+    const resultBlock = buildBullets(["front-result1", "front-result2", "front-result3"]);
+    lines.push(resultBlock || "・");
+    lines.push("");
+    lines.push("――――――――――――――――――");
+    lines.push("■ 課題・問題点(個人の課題・問題点)");
+
+    const issueBlock = buildBullets(["front-issue1", "front-issue2", "front-issue3"]);
+    lines.push(issueBlock || "・");
+    lines.push("");
+    lines.push("――――――――――――――――――");
+    lines.push("■ 明日の予定(MTG/MTG外の動き)");
+
+    const planBlock = buildNumbered(["front-plan1", "front-plan2", "front-plan3"]);
+    lines.push(planBlock || "1.\n\n2.\n\n3.");
+    lines.push("――――――――――――――――――");
+    lines.push("■ 本日の気づき・振り返り（学び・改善点など）");
+
+    const refBlock = buildBullets(["front-ref1", "front-ref2", "front-ref3"]);
+    lines.push(refBlock || "・");
+
+    return lines.join("\n");
+  }
+
+  // フロント以外用テキスト生成
+  function buildBackText() {
+    const lines = [];
+
+    lines.push("【日付】      ：" + v("back-date"));
+    lines.push("【氏名】      ：" + v("back-name"));
+    lines.push("");
+    lines.push("――――――――――――――――――");
+    lines.push("■ 本日の業務内容");
+
+    const workBlock = buildNumbered(["back-work1", "back-work2", "back-work3"]);
+    lines.push(workBlock || "1.\n\n2.\n\n3.");
+    lines.push("――――――――――――――――――");
+    lines.push("■ 本日の成果・進捗");
+
+    const resultBlock = buildBullets(["back-result1", "back-result2", "back-result3"]);
+    lines.push(resultBlock || "・");
+    lines.push("");
+    lines.push("――――――――――――――――――");
+    lines.push("■ 課題・問題点");
+
+    const issueBlock = buildBullets(["back-issue1", "back-issue2", "back-issue3"]);
+    lines.push(issueBlock || "・");
+    lines.push("");
+    lines.push("――――――――――――――――――");
+    lines.push("■ 明日の予定");
+
+    const planBlock = buildNumbered(["back-plan1", "back-plan2", "back-plan3"]);
+    lines.push(planBlock || "1.\n\n2.\n\n3.");
+    lines.push("――――――――――――――――――");
+    lines.push("■ 気づき・振り返り（学び・改善点など）");
+
+    const refBlock = buildBullets(["back-ref1", "back-ref2", "back-ref3"]);
+    lines.push(refBlock || "・");
+
+    return lines.join("\n");
+  }
+
+  // クリップボードコピー共通処理
+  function copyText(text, msgSpanId) {
+    const msgSpan = document.getElementById(msgSpanId);
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        msgSpan.textContent = "コピーしました。";
+        setTimeout(() => { msgSpan.textContent = ""; }, 2000);
+      }).catch(err => {
+        console.error(err);
+        fallbackCopy(text, msgSpan);
+      });
+    } else {
+      fallbackCopy(text, msgSpan);
+    }
+  }
+
+  function fallbackCopy(text, msgSpan) {
+    const temp = document.createElement("textarea");
+    temp.value = text;
+    document.body.appendChild(temp);
+    temp.select();
+    temp.setSelectionRange(0, temp.value.length);
+    const ok = document.execCommand("copy");
+    document.body.removeChild(temp);
+
+    msgSpan.textContent = ok ? "コピーしました。" : "コピーに失敗しました。";
+    setTimeout(() => { msgSpan.textContent = ""; }, 2000);
+  }
+
+  function generateAndCopyFront() {
+    const text = buildFrontText();
+    document.getElementById("front-output").value = text;
+    saveFrontForm();   // 生成時に保存
+    copyText(text, "front-msg");
+  }
+
+  function generateAndCopyBack() {
+    const text = buildBackText();
+    document.getElementById("back-output").value = text;
+    saveBackForm();    // 生成時に保存
+    copyText(text, "back-msg");
+  }
+
+  // ▼ ページ読み込み時の初期処理
+  document.addEventListener("DOMContentLoaded", function() {
+    // 今日の日付を YYYY/MM/DD 形式で作成
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm   = String(today.getMonth() + 1).padStart(2, "0");
+    const dd   = String(today.getDate()).padStart(2, "0");
+    const todayStr = `${yyyy}/${mm}/${dd}`;
+
+    // 日付欄が空なら今日の日付を入れる
+    ["front-date", "back-date"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && !el.value) {
+        el.value = todayStr;
+      }
+    });
+
+    // 前回の名前を localStorage から取得
+    try {
+      const savedName = localStorage.getItem("nippoName");
+      if (savedName) {
+        ["front-name", "back-name"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el && !el.value) {
+            el.value = savedName;
+          }
+        });
+      }
+    } catch (e) {
+      console.error("名前の読み込みに失敗しました", e);
+    }
+
+    // 名前が変更されたら nippoName として保存
+    ["front-name", "back-name"].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("change", () => {
+        const name = el.value.trim();
+        if (!name) return;
+        try {
+          localStorage.setItem("nippoName", name);
+        } catch (e) {
+          console.error("名前の保存に失敗しました", e);
+        }
+      });
+    });
+
+    // 各フィールド変更時に自動保存（※日付・名前は除く）
+    FRONT_SAVE_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("change", saveFrontForm);
+    });
+    BACK_SAVE_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("change", saveBackForm);
+    });
+
+    // 日付 or 名前が変わったら「日付＋名前」で復元を試みる
+    ["front-date","front-name"].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("change", restoreFrontForm);
+    });
+    ["back-date","back-name"].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("change", restoreBackForm);
+    });
+
+    // 初期表示時、現在の「日付＋名前」で保存済みデータがあれば復元
+    restoreFrontForm();
+    restoreBackForm();
+
+    // ★ 最後に開いていたタブを復元
+    try {
+      const lastTab = localStorage.getItem("nippoLastTab");
+      if (lastTab === "front" || lastTab === "back") {
+        showForm(lastTab);
+      }
+      // それもなければ両方非表示のまま（タブをクリックしたときに表示）
+    } catch (e) {
+      console.error("タブ状態の復元に失敗しました", e);
+    }
+  });
+</script>
+
+</body>
+</html>
