@@ -332,46 +332,6 @@
       border-top: 1px dashed rgba(148, 163, 184, 0.6);
     }
 
-    /* 4件目以降の店舗ブロック */
-    .store-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 8px;
-      margin-bottom: 4px;
-    }
-
-    .store-header .store-index {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .btn-delete-store {
-      appearance: none;
-      border-radius: 999px;
-      border: none;
-      padding: 2px 10px;
-      font-size: 11px;
-      cursor: pointer;
-      background: #fee2e2;
-      color: #b91c1c;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: background 0.15s ease, transform 0.08s ease, box-shadow 0.1s ease;
-    }
-
-    .btn-delete-store:hover {
-      background: #fecaca;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(248, 113, 113, 0.5);
-    }
-
-    .btn-delete-store:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(248, 113, 113, 0.5);
-    }
-
     @media (max-width: 640px) {
       .card {
         padding: 18px 14px;
@@ -414,7 +374,7 @@
             （フロント用）
             <span class="badge">Front</span>
           </h2>
-          <span class="hint">MTG店舗ベースの日報用フォーマット</span>
+          <span class="hint">フロント業務の日報用フォーマット</span>
         </div>
 
         <div class="field-row">
@@ -427,86 +387,48 @@
         </div>
 
         <div class="section-title">
-          ■ 本日のMTG店舗
-          <span class="small">最大3店舗分（＋ボタンで4件目以降を追加できます）</span>
-        </div>
-
-        <!-- 店舗1〜3（固定） -->
-        <div class="sub-label">1件目</div>
-        <div class="field-row">
-          <label>店舗名：</label>
-          <input type="text" id="front-store1-name">
-        </div>
-        <div class="field-row">
-          <label>課題・提案：</label>
-          <input type="text" id="front-store1-issue">
-        </div>
-
-        <div class="sub-label">2件目</div>
-        <div class="field-row">
-          <label>店舗名：</label>
-          <input type="text" id="front-store2-name">
-        </div>
-        <div class="field-row">
-          <label>課題・提案：</label>
-          <input type="text" id="front-store2-issue">
-        </div>
-
-        <div class="sub-label">3件目</div>
-        <div class="field-row">
-          <label>店舗名：</label>
-          <input type="text" id="front-store3-name">
-        </div>
-        <div class="field-row">
-          <label>課題・提案：</label>
-          <input type="text" id="front-store3-issue">
-        </div>
-
-        <div class="small">※ 4件目以降は「＋ 店舗を追加」ボタンで入力欄を増やせます。</div>
-
-        <!-- 4件目以降を追加するコンテナ -->
-        <div id="front-extra-stores"></div>
-        <button type="button" class="btn-secondary" onclick="addFrontStore()">＋ 店舗を追加</button>
-
-        <div class="section-title">
           ■ 本日の成果・進捗
           <span class="small">（更新・MTG設定など自分なりの成果）</span>
         </div>
-        <div class="inline-3">
-          <span class="prefix">・</span><input type="text" id="front-result1">
-          <span class="prefix">・</span><input type="text" id="front-result2">
-          <span class="prefix">・</span><input type="text" id="front-result3">
+        <div class="inline-3" id="front-result-block">
+          <span class="prefix">・</span><input type="text" id="front-result1" class="front-result-input">
+          <span class="prefix">・</span><input type="text" id="front-result2" class="front-result-input">
+          <span class="prefix">・</span><input type="text" id="front-result3" class="front-result-input">
         </div>
+        <button type="button" class="btn-secondary" onclick="addFrontResult()">＋ 行を追加</button>
 
         <div class="section-title">
           ■ 課題・問題点
           <span class="small">（個人の課題・問題点）</span>
         </div>
-        <div class="inline-3">
-          <span class="prefix">・</span><input type="text" id="front-issue1">
-          <span class="prefix">・</span><input type="text" id="front-issue2">
-          <span class="prefix">・</span><input type="text" id="front-issue3">
+        <div class="inline-3" id="front-issue-block">
+          <span class="prefix">・</span><input type="text" id="front-issue1" class="front-issue-input">
+          <span class="prefix">・</span><input type="text" id="front-issue2" class="front-issue-input">
+          <span class="prefix">・</span><input type="text" id="front-issue3" class="front-issue-input">
         </div>
+        <button type="button" class="btn-secondary" onclick="addFrontIssue()">＋ 行を追加</button>
 
         <div class="section-title">
           ■ 明日の予定
           <span class="small">（MTG/MTG外の動き）</span>
         </div>
-        <div class="inline-3">
-          <span class="prefix">1.</span><input type="text" id="front-plan1">
-          <span class="prefix">2.</span><input type="text" id="front-plan2">
-          <span class="prefix">3.</span><input type="text" id="front-plan3">
+        <div class="inline-3" id="front-plan-block">
+          <span class="prefix">1.</span><input type="text" id="front-plan1" class="front-plan-input">
+          <span class="prefix">2.</span><input type="text" id="front-plan2" class="front-plan-input">
+          <span class="prefix">3.</span><input type="text" id="front-plan3" class="front-plan-input">
         </div>
+        <button type="button" class="btn-secondary" onclick="addFrontPlan()">＋ 行を追加</button>
 
         <div class="section-title">
           ■ 本日の気づき・振り返り
           <span class="small">（学び・改善点など）</span>
         </div>
-        <div class="inline-3">
-          <span class="prefix">・</span><input type="text" id="front-ref1">
-          <span class="prefix">・</span><input type="text" id="front-ref2">
-          <span class="prefix">・</span><input type="text" id="front-ref3">
+        <div class="inline-3" id="front-ref-block">
+          <span class="prefix">・</span><input type="text" id="front-ref1" class="front-ref-input">
+          <span class="prefix">・</span><input type="text" id="front-ref2" class="front-ref-input">
+          <span class="prefix">・</span><input type="text" id="front-ref3" class="front-ref-input">
         </div>
+        <button type="button" class="btn-secondary" onclick="addFrontRef()">＋ 行を追加</button>
 
         <hr>
 
@@ -541,39 +463,44 @@
         </div>
 
         <div class="section-title">■ 本日の業務内容</div>
-        <div class="inline-3">
-          <span class="prefix">1.</span><input type="text" id="back-work1">
-          <span class="prefix">2.</span><input type="text" id="back-work2">
-          <span class="prefix">3.</span><input type="text" id="back-work3">
+        <div class="inline-3" id="back-work-block">
+          <span class="prefix">1.</span><input type="text" id="back-work1" class="back-work-input">
+          <span class="prefix">2.</span><input type="text" id="back-work2" class="back-work-input">
+          <span class="prefix">3.</span><input type="text" id="back-work3" class="back-work-input">
         </div>
+        <button type="button" class="btn-secondary" onclick="addBackWork()">＋ 行を追加</button>
 
         <div class="section-title">■ 本日の成果・進捗</div>
-        <div class="inline-3">
-          <span class="prefix">・</span><input type="text" id="back-result1">
-          <span class="prefix">・</span><input type="text" id="back-result2">
-          <span class="prefix">・</span><input type="text" id="back-result3">
+        <div class="inline-3" id="back-result-block">
+          <span class="prefix">・</span><input type="text" id="back-result1" class="back-result-input">
+          <span class="prefix">・</span><input type="text" id="back-result2" class="back-result-input">
+          <span class="prefix">・</span><input type="text" id="back-result3" class="back-result-input">
         </div>
+        <button type="button" class="btn-secondary" onclick="addBackResult()">＋ 行を追加</button>
 
         <div class="section-title">■ 課題・問題点</div>
-        <div class="inline-3">
-          <span class="prefix">・</span><input type="text" id="back-issue1">
-          <span class="prefix">・</span><input type="text" id="back-issue2">
-          <span class="prefix">・</span><input type="text" id="back-issue3">
+        <div class="inline-3" id="back-issue-block">
+          <span class="prefix">・</span><input type="text" id="back-issue1" class="back-issue-input">
+          <span class="prefix">・</span><input type="text" id="back-issue2" class="back-issue-input">
+          <span class="prefix">・</span><input type="text" id="back-issue3" class="back-issue-input">
         </div>
+        <button type="button" class="btn-secondary" onclick="addBackIssue()">＋ 行を追加</button>
 
         <div class="section-title">■ 明日の予定</div>
-        <div class="inline-3">
-          <span class="prefix">1.</span><input type="text" id="back-plan1">
-          <span class="prefix">2.</span><input type="text" id="back-plan2">
-          <span class="prefix">3.</span><input type="text" id="back-plan3">
+        <div class="inline-3" id="back-plan-block">
+          <span class="prefix">1.</span><input type="text" id="back-plan1" class="back-plan-input">
+          <span class="prefix">2.</span><input type="text" id="back-plan2" class="back-plan-input">
+          <span class="prefix">3.</span><input type="text" id="back-plan3" class="back-plan-input">
         </div>
+        <button type="button" class="btn-secondary" onclick="addBackPlan()">＋ 行を追加</button>
 
         <div class="section-title">■ 気づき・振り返り（学び・改善点など）</div>
-        <div class="inline-3">
-          <span class="prefix">・</span><input type="text" id="back-ref1">
-          <span class="prefix">・</span><input type="text" id="back-ref2">
-          <span class="prefix">・</span><input type="text" id="back-ref3">
+        <div class="inline-3" id="back-ref-block">
+          <span class="prefix">・</span><input type="text" id="back-ref1" class="back-ref-input">
+          <span class="prefix">・</span><input type="text" id="back-ref2" class="back-ref-input">
+          <span class="prefix">・</span><input type="text" id="back-ref3" class="back-ref-input">
         </div>
+        <button type="button" class="btn-secondary" onclick="addBackRef()">＋ 行を追加</button>
 
         <hr>
 
@@ -594,9 +521,6 @@
   // 対象フィールド一覧（保存・復元用）
   const FRONT_FIELDS = [
     "front-date","front-name",
-    "front-store1-name","front-store1-issue",
-    "front-store2-name","front-store2-issue",
-    "front-store3-name","front-store3-issue",
     "front-result1","front-result2","front-result3",
     "front-issue1","front-issue2","front-issue3",
     "front-plan1","front-plan2","front-plan3",
@@ -653,119 +577,233 @@
     return el ? el.value.trim() : "";
   }
 
-  // 共通：箇条書き（・）を組み立て
-  function buildBullets(ids) {
+  // 共通：ID とクラスで値を集めるヘルパー
+  function gatherValues(ids, extraClass) {
+    const values = [];
+
+    if (Array.isArray(ids)) {
+      ids.forEach(id => {
+        const val = v(id);
+        if (val) values.push(val);
+      });
+    }
+
+    if (extraClass) {
+      const inputs = document.querySelectorAll("input." + extraClass);
+      inputs.forEach(input => {
+        if (ids && ids.indexOf(input.id) !== -1) return; // ベースの3件は除外
+        const val = input.value.trim();
+        if (val) values.push(val);
+      });
+    }
+    return values;
+  }
+
+  // 共通：箇条書き（・）を組み立て（＋追加行対応）
+  function buildBullets(ids, extraClass) {
+    const values = gatherValues(ids, extraClass);
+    if (!values.length) return "・";
+    return values.map(t => "・" + t).join("\n");
+  }
+
+  // 共通：番号付き 1. 2. 3. を組み立て（＋追加行対応）
+  function buildNumbered(ids, extraClass) {
+    const values = gatherValues(ids, extraClass);
+    if (!values.length) return "1.\n\n2.\n\n3.";
     const lines = [];
-    ids.forEach(id => {
-      const value = v(id);
-      if (value) {
-        lines.push("・" + value);
-      }
+    values.forEach((val, idx) => {
+      lines.push((idx + 1) + ".");
+      lines.push(val);
+      lines.push("");
     });
-    return lines.join("\n");
+    return lines.join("\n").replace(/\n$/, "");
   }
 
-  // 共通：番号付き 1. 2. 3. を組み立て
-  function buildNumbered(ids) {
-    const lines = [];
-    ids.forEach((id, index) => {
-      const value = v(id);
-      if (value) {
-        lines.push((index + 1) + ".");
-        lines.push(value);
-        lines.push(""); // 1件ごとに空行
-      }
+  // 追加行の値だけを保存用に取り出す
+  function getExtraValues(extraClass, baseIds) {
+    const values = [];
+    const inputs = document.querySelectorAll("input." + extraClass);
+    inputs.forEach(input => {
+      if (baseIds && baseIds.indexOf(input.id) !== -1) return;
+      const val = input.value.trim();
+      if (val) values.push(val);
     });
-    return lines.join("\n").replace(/\n$/, ""); // 最後の余分な改行を調整
+    return values;
   }
 
-  // ===== フロント MTG 4件目以降の動的追加 =====
-  function addFrontStore(nameValue = "", issueValue = "") {
-    const container = document.getElementById("front-extra-stores");
+  // 動的行を削除（ベースの input 以外を削除）
+  function clearDynamicRows(containerId, baseInputIds) {
+    const container = document.getElementById(containerId);
     if (!container) return;
-
-    const currentCount = container.querySelectorAll(".front-extra-store-block").length;
-    const index = currentCount + 4; // 4件目からスタート
-
-    const block = document.createElement("div");
-    block.className = "front-extra-store-block";
-
-    block.innerHTML = `
-      <div class="store-header">
-        <span class="sub-label store-index">${index}件目</span>
-        <button type="button" class="btn-delete-store" onclick="removeFrontStore(this)">削除</button>
-      </div>
-      <div class="field-row">
-        <label>店舗名：</label>
-        <input type="text"
-               id="front-store${index}-name"
-               data-store-extra="name">
-      </div>
-      <div class="field-row">
-        <label>課題・提案：</label>
-        <input type="text"
-               id="front-store${index}-issue"
-               data-store-extra="issue">
-      </div>
-    `;
-
-    container.appendChild(block);
-
-    const nameInput  = block.querySelector('input[data-store-extra="name"]');
-    const issueInput = block.querySelector('input[data-store-extra="issue"]');
-
-    if (nameInput)  nameInput.value  = nameValue || "";
-    if (issueInput) issueInput.value = issueValue || "";
-
-    // 動的追加分も自動保存の対象に
-    [nameInput, issueInput].forEach(el => {
-      if (!el) return;
-      el.addEventListener("change", saveFrontForm);
-    });
-  }
-
-  function getExtraStores() {
-    const container = document.getElementById("front-extra-stores");
-    if (!container) return [];
-    const blocks = container.querySelectorAll(".front-extra-store-block");
-    const stores = [];
-    blocks.forEach(block => {
-      const nameInput  = block.querySelector('input[data-store-extra="name"]');
-      const issueInput = block.querySelector('input[data-store-extra="issue"]');
-      const name  = nameInput  ? nameInput.value.trim()  : "";
-      const issue = issueInput ? issueInput.value.trim() : "";
-      stores.push({ name, issue });
-    });
-    return stores;
-  }
-
-  function clearFrontExtraStores() {
-    const container = document.getElementById("front-extra-stores");
-    if (!container) return;
-    container.innerHTML = "";
-  }
-
-  function renumberFrontExtraStores() {
-    const container = document.getElementById("front-extra-stores");
-    if (!container) return;
-    const blocks = container.querySelectorAll(".front-extra-store-block");
-    blocks.forEach((block, i) => {
-      const label = block.querySelector(".store-index");
-      if (label) {
-        label.textContent = `${i + 4}件目`;
+    const inputs = Array.from(container.querySelectorAll("input"));
+    inputs.forEach(input => {
+      if (baseInputIds.indexOf(input.id) !== -1) return; // ベース行
+      const span = input.previousElementSibling;
+      if (span && span.classList.contains("prefix")) {
+        span.remove();
       }
+      input.remove();
     });
   }
 
-  function removeFrontStore(buttonEl) {
-    const block = buttonEl.closest(".front-extra-store-block");
+  function clearFrontDynamicSections() {
+    clearDynamicRows("front-result-block", ["front-result1","front-result2","front-result3"]);
+    clearDynamicRows("front-issue-block",  ["front-issue1","front-issue2","front-issue3"]);
+    clearDynamicRows("front-plan-block",   ["front-plan1","front-plan2","front-plan3"]);
+    clearDynamicRows("front-ref-block",    ["front-ref1","front-ref2","front-ref3"]);
+  }
+
+  function clearBackDynamicSections() {
+    clearDynamicRows("back-work-block",   ["back-work1","back-work2","back-work3"]);
+    clearDynamicRows("back-result-block", ["back-result1","back-result2","back-result3"]);
+    clearDynamicRows("back-issue-block",  ["back-issue1","back-issue2","back-issue3"]);
+    clearDynamicRows("back-plan-block",   ["back-plan1","back-plan2","back-plan3"]);
+    clearDynamicRows("back-ref-block",    ["back-ref1","back-ref2","back-ref3"]);
+  }
+
+  // ===== フロント：行追加関数 =====
+  function addFrontResult(value = "") {
+    const block = document.getElementById("front-result-block");
     if (!block) return;
-    block.remove();
-    renumberFrontExtraStores();
-    saveFrontForm(); // 削除後の状態を保存
+    const span = document.createElement("span");
+    span.className = "prefix";
+    span.textContent = "・";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "front-result-input";
+    input.value = value;
+    input.addEventListener("change", saveFrontForm);
+    block.appendChild(span);
+    block.appendChild(input);
   }
 
-  // ==== フロント用 保存・復元 ====
+  function addFrontIssue(value = "") {
+    const block = document.getElementById("front-issue-block");
+    if (!block) return;
+    const span = document.createElement("span");
+    span.className = "prefix";
+    span.textContent = "・";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "front-issue-input";
+    input.value = value;
+    input.addEventListener("change", saveFrontForm);
+    block.appendChild(span);
+    block.appendChild(input);
+  }
+
+  function addFrontPlan(value = "") {
+    const block = document.getElementById("front-plan-block");
+    if (!block) return;
+    const existing = block.querySelectorAll("input.front-plan-input");
+    const num = existing.length + 1;
+    const span = document.createElement("span");
+    span.className = "prefix";
+    span.textContent = num + ".";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "front-plan-input";
+    input.value = value;
+    input.addEventListener("change", saveFrontForm);
+    block.appendChild(span);
+    block.appendChild(input);
+  }
+
+  function addFrontRef(value = "") {
+    const block = document.getElementById("front-ref-block");
+    if (!block) return;
+    const span = document.createElement("span");
+    span.className = "prefix";
+    span.textContent = "・";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "front-ref-input";
+    input.value = value;
+    input.addEventListener("change", saveFrontForm);
+    block.appendChild(span);
+    block.appendChild(input);
+  }
+
+  // ===== バック：行追加関数 =====
+  function addBackWork(value = "") {
+    const block = document.getElementById("back-work-block");
+    if (!block) return;
+    const existing = block.querySelectorAll("input.back-work-input");
+    const num = existing.length + 1;
+    const span = document.createElement("span");
+    span.className = "prefix";
+    span.textContent = num + ".";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "back-work-input";
+    input.value = value;
+    input.addEventListener("change", saveBackForm);
+    block.appendChild(span);
+    block.appendChild(input);
+  }
+
+  function addBackResult(value = "") {
+    const block = document.getElementById("back-result-block");
+    if (!block) return;
+    const span = document.createElement("span");
+    span.className = "prefix";
+    span.textContent = "・";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "back-result-input";
+    input.value = value;
+    input.addEventListener("change", saveBackForm);
+    block.appendChild(span);
+    block.appendChild(input);
+  }
+
+  function addBackIssue(value = "") {
+    const block = document.getElementById("back-issue-block");
+    if (!block) return;
+    const span = document.createElement("span");
+    span.className = "prefix";
+    span.textContent = "・";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "back-issue-input";
+    input.value = value;
+    input.addEventListener("change", saveBackForm);
+    block.appendChild(span);
+    block.appendChild(input);
+  }
+
+  function addBackPlan(value = "") {
+    const block = document.getElementById("back-plan-block");
+    if (!block) return;
+    const existing = block.querySelectorAll("input.back-plan-input");
+    const num = existing.length + 1;
+    const span = document.createElement("span");
+    span.className = "prefix";
+    span.textContent = num + ".";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "back-plan-input";
+    input.value = value;
+    input.addEventListener("change", saveBackForm);
+    block.appendChild(span);
+    block.appendChild(input);
+  }
+
+  function addBackRef(value = "") {
+    const block = document.getElementById("back-ref-block");
+    if (!block) return;
+    const span = document.createElement("span");
+    span.className = "prefix";
+    span.textContent = "・";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "back-ref-input";
+    input.value = value;
+    input.addEventListener("change", saveBackForm);
+    block.appendChild(span);
+  }
+
+  // ==== フロント用 保存・復元 ====  
   function getFrontKey() {
     const date = v("front-date");
     const name = v("front-name");
@@ -779,7 +817,7 @@
       const el = document.getElementById(id);
       if (el) el.value = "";
     });
-    clearFrontExtraStores();
+    clearFrontDynamicSections();
     const out = document.getElementById("front-output");
     if (out) out.value = "";
   }
@@ -794,8 +832,11 @@
       if (el) data[id] = el.value;
     });
 
-    // 4件目以降
-    data.extraStores = getExtraStores();
+    // 追加行（4件目以降）
+    data.extraFrontResults = getExtraValues("front-result-input", ["front-result1","front-result2","front-result3"]);
+    data.extraFrontIssues  = getExtraValues("front-issue-input",  ["front-issue1","front-issue2","front-issue3"]);
+    data.extraFrontPlans   = getExtraValues("front-plan-input",   ["front-plan1","front-plan2","front-plan3"]);
+    data.extraFrontRefs    = getExtraValues("front-ref-input",    ["front-ref1","front-ref2","front-ref3"]);
 
     const out = document.getElementById("front-output");
     data.frontOutput = out ? out.value : "";
@@ -818,26 +859,39 @@
       console.error("フロント用データの取得に失敗しました", e);
     }
     if (!raw) {
-      // 保存データがなければ、その日付＆名前用として空にする
       clearFrontFormExceptKey();
       return;
     }
 
     try {
       const data = JSON.parse(raw);
+
+      // まず動的行を全部削除
+      clearFrontDynamicSections();
+
+      // ベース行
       FRONT_FIELDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
         if (data[id] !== undefined) {
-          const el = document.getElementById(id);
-          if (el) el.value = data[id];
+          el.value = data[id];
+        } else {
+          el.value = "";
         }
       });
 
-      clearFrontExtraStores();
-      if (Array.isArray(data.extraStores)) {
-        data.extraStores.forEach(store => {
-          addFrontStore(store.name || "", store.issue || "");
-        });
-        renumberFrontExtraStores();
+      // 追加行を復元
+      if (Array.isArray(data.extraFrontResults)) {
+        data.extraFrontResults.forEach(val => addFrontResult(val));
+      }
+      if (Array.isArray(data.extraFrontIssues)) {
+        data.extraFrontIssues.forEach(val => addFrontIssue(val));
+      }
+      if (Array.isArray(data.extraFrontPlans)) {
+        data.extraFrontPlans.forEach(val => addFrontPlan(val));
+      }
+      if (Array.isArray(data.extraFrontRefs)) {
+        data.extraFrontRefs.forEach(val => addFrontRef(val));
       }
 
       if (data.frontOutput !== undefined) {
@@ -863,6 +917,7 @@
       const el = document.getElementById(id);
       if (el) el.value = "";
     });
+    clearBackDynamicSections();
     const out = document.getElementById("back-output");
     if (out) out.value = "";
   }
@@ -876,6 +931,13 @@
       const el = document.getElementById(id);
       if (el) data[id] = el.value;
     });
+
+    data.extraBackWorks   = getExtraValues("back-work-input",   ["back-work1","back-work2","back-work3"]);
+    data.extraBackResults = getExtraValues("back-result-input", ["back-result1","back-result2","back-result3"]);
+    data.extraBackIssues  = getExtraValues("back-issue-input",  ["back-issue1","back-issue2","back-issue3"]);
+    data.extraBackPlans   = getExtraValues("back-plan-input",   ["back-plan1","back-plan2","back-plan3"]);
+    data.extraBackRefs    = getExtraValues("back-ref-input",    ["back-ref1","back-ref2","back-ref3"]);
+
     const out = document.getElementById("back-output");
     data.backOutput = out ? out.value : "";
 
@@ -903,12 +965,35 @@
 
     try {
       const data = JSON.parse(raw);
+
+      clearBackDynamicSections();
+
       BACK_FIELDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
         if (data[id] !== undefined) {
-          const el = document.getElementById(id);
-          if (el) el.value = data[id];
+          el.value = data[id];
+        } else {
+          el.value = "";
         }
       });
+
+      if (Array.isArray(data.extraBackWorks)) {
+        data.extraBackWorks.forEach(val => addBackWork(val));
+      }
+      if (Array.isArray(data.extraBackResults)) {
+        data.extraBackResults.forEach(val => addBackResult(val));
+      }
+      if (Array.isArray(data.extraBackIssues)) {
+        data.extraBackIssues.forEach(val => addBackIssue(val));
+      }
+      if (Array.isArray(data.extraBackPlans)) {
+        data.extraBackPlans.forEach(val => addBackPlan(val));
+      }
+      if (Array.isArray(data.extraBackRefs)) {
+        data.extraBackRefs.forEach(val => addBackRef(val));
+      }
+
       if (data.backOutput !== undefined) {
         const out = document.getElementById("back-output");
         if (out) out.value = data.backOutput;
@@ -918,7 +1003,7 @@
     }
   }
 
-  // フロント用テキスト生成
+  // フロント用テキスト生成（MTG店舗ブロックは削除）
   function buildFrontText() {
     const lines = [];
 
@@ -926,69 +1011,39 @@
     lines.push("【氏名】      ：" + v("front-name"));
     lines.push("");
     lines.push("――――――――――――――――――");
-    lines.push("■ 本日のMTG店舗");
-
-    // 店舗情報（固定1〜3件）
-    const stores = [
-      { name: v("front-store1-name"), issue: v("front-store1-issue") },
-      { name: v("front-store2-name"), issue: v("front-store2-issue") },
-      { name: v("front-store3-name"), issue: v("front-store3-issue") }
-    ];
-
-    // 4件目以降（動的）
-    const extra = getExtraStores();
-    extra.forEach(s => stores.push(s));
-
-    let storeIndex = 1;
-    stores.forEach(s => {
-      if (s.name || s.issue) {
-        lines.push(storeIndex + ".");
-        lines.push("店舗名：" + (s.name || ""));
-        lines.push("課題・提案内容：" + (s.issue || ""));
-        lines.push("");
-        storeIndex++;
-      }
-    });
-
-    if (storeIndex === 1) {
-      // 1件も入力がない場合は、ひな形だけ出す
-      lines.push("1.");
-      lines.push("店舗名：");
-      lines.push("課題・提案内容：");
-      lines.push("");
-      lines.push("2.");
-      lines.push("店舗名：");
-      lines.push("課題・提案内容：");
-      lines.push("");
-      lines.push("3.");
-      lines.push("店舗名：");
-      lines.push("課題・提案内容：");
-      lines.push("");
-    }
-
-    lines.push("(ある分追加してください)");
-    lines.push("――――――――――――――――――");
     lines.push("■ 本日の成果・進捗(更新・MTG設定など自分なりの成果)");
 
-    const resultBlock = buildBullets(["front-result1", "front-result2", "front-result3"]);
-    lines.push(resultBlock || "・");
+    const resultBlock = buildBullets(
+      ["front-result1","front-result2","front-result3"],
+      "front-result-input"
+    );
+    lines.push(resultBlock);
     lines.push("");
     lines.push("――――――――――――――――――");
     lines.push("■ 課題・問題点(個人の課題・問題点)");
 
-    const issueBlock = buildBullets(["front-issue1", "front-issue2", "front-issue3"]);
-    lines.push(issueBlock || "・");
+    const issueBlock = buildBullets(
+      ["front-issue1","front-issue2","front-issue3"],
+      "front-issue-input"
+    );
+    lines.push(issueBlock);
     lines.push("");
     lines.push("――――――――――――――――――");
     lines.push("■ 明日の予定(MTG/MTG外の動き)");
 
-    const planBlock = buildNumbered(["front-plan1", "front-plan2", "front-plan3"]);
-    lines.push(planBlock || "1.\n\n2.\n\n3.");
+    const planBlock = buildNumbered(
+      ["front-plan1","front-plan2","front-plan3"],
+      "front-plan-input"
+    );
+    lines.push(planBlock);
     lines.push("――――――――――――――――――");
     lines.push("■ 本日の気づき・振り返り（学び・改善点など）");
 
-    const refBlock = buildBullets(["front-ref1", "front-ref2", "front-ref3"]);
-    lines.push(refBlock || "・");
+    const refBlock = buildBullets(
+      ["front-ref1","front-ref2","front-ref3"],
+      "front-ref-input"
+    );
+    lines.push(refBlock);
 
     return lines.join("\n");
   }
@@ -1003,30 +1058,45 @@
     lines.push("――――――――――――――――――");
     lines.push("■ 本日の業務内容");
 
-    const workBlock = buildNumbered(["back-work1", "back-work2", "back-work3"]);
-    lines.push(workBlock || "1.\n\n2.\n\n3.");
+    const workBlock = buildNumbered(
+      ["back-work1","back-work2","back-work3"],
+      "back-work-input"
+    );
+    lines.push(workBlock);
     lines.push("――――――――――――――――――");
     lines.push("■ 本日の成果・進捗");
 
-    const resultBlock = buildBullets(["back-result1", "back-result2", "back-result3"]);
-    lines.push(resultBlock || "・");
+    const resultBlock = buildBullets(
+      ["back-result1","back-result2","back-result3"],
+      "back-result-input"
+    );
+    lines.push(resultBlock);
     lines.push("");
     lines.push("――――――――――――――――――");
     lines.push("■ 課題・問題点");
 
-    const issueBlock = buildBullets(["back-issue1", "back-issue2", "back-issue3"]);
-    lines.push(issueBlock || "・");
+    const issueBlock = buildBullets(
+      ["back-issue1","back-issue2","back-issue3"],
+      "back-issue-input"
+    );
+    lines.push(issueBlock);
     lines.push("");
     lines.push("――――――――――――――――――");
     lines.push("■ 明日の予定");
 
-    const planBlock = buildNumbered(["back-plan1", "back-plan2", "back-plan3"]);
-    lines.push(planBlock || "1.\n\n2.\n\n3.");
+    const planBlock = buildNumbered(
+      ["back-plan1","back-plan2","back-plan3"],
+      "back-plan-input"
+    );
+    lines.push(planBlock);
     lines.push("――――――――――――――――――");
     lines.push("■ 気づき・振り返り（学び・改善点など）");
 
-    const refBlock = buildBullets(["back-ref1", "back-ref2", "back-ref3"]);
-    lines.push(refBlock || "・");
+    const refBlock = buildBullets(
+      ["back-ref1","back-ref2","back-ref3"],
+      "back-ref-input"
+    );
+    lines.push(refBlock);
 
     return lines.join("\n");
   }
@@ -1156,7 +1226,6 @@
       if (lastTab === "front" || lastTab === "back") {
         showForm(lastTab);
       }
-      // それもなければ両方非表示のまま（タブをクリックしたときに表示）
     } catch (e) {
       console.error("タブ状態の復元に失敗しました", e);
     }
