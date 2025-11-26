@@ -209,7 +209,7 @@
 
     .inline-3 {
       display: grid;
-      grid-template-columns: 22px 1fr;
+      grid-template-columns: 22px 1fr auto; /* ← 3列目を削除ボタン用に追加 */
       column-gap: 6px;
       row-gap: 4px;
       align-items: center;
@@ -319,6 +319,26 @@
     .btn-secondary:active {
       transform: translateY(0);
       box-shadow: 0 3px 10px rgba(148, 163, 184, 0.3);
+    }
+
+    .btn-icon-delete {
+      appearance: none;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      color: #9ca3af;
+      padding: 2px 4px;
+      line-height: 1;
+    }
+    
+    .btn-icon-delete:hover {
+      color: #ef4444;
+      transform: translateY(-1px);
+    }
+    
+    .btn-icon-delete:active {
+      transform: translateY(0);
     }
 
     .msg {
@@ -637,11 +657,20 @@
     if (!container) return;
     const inputs = Array.from(container.querySelectorAll("input"));
     inputs.forEach(input => {
-      if (baseInputIds.indexOf(input.id) !== -1) return; // ベース行
+      // ベース行（id が指定されているもの）は残す
+      if (baseInputIds.indexOf(input.id) !== -1) return;
+  
       const span = input.previousElementSibling;
       if (span && span.classList.contains("prefix")) {
         span.remove();
       }
+  
+      // 右側にある🗑ボタンも消す
+      const button = input.nextElementSibling;
+      if (button && button.classList.contains("btn-icon-delete")) {
+        button.remove();
+      }
+  
       input.remove();
     });
   }
@@ -790,18 +819,35 @@
   }
 
   function addBackRef(value = "") {
-    const block = document.getElementById("back-ref-block");
-    if (!block) return;
-    const span = document.createElement("span");
-    span.className = "prefix";
-    span.textContent = "・";
-    const input = document.createElement("input");
-    input.type = "text";
-    input.className = "back-ref-input";
-    input.value = value;
-    input.addEventListener("change", saveBackForm);
-    block.appendChild(span);
-  }
+  const block = document.getElementById("back-ref-block");
+  if (!block) return;
+
+  const span = document.createElement("span");
+  span.className = "prefix";
+  span.textContent = "・";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "back-ref-input";
+  input.value = value;
+  input.addEventListener("change", saveBackForm);
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "btn-icon-delete";
+  btn.textContent = "🗑";
+  btn.addEventListener("click", () => {
+    span.remove();
+    input.remove();
+    btn.remove();
+    saveBackForm();
+  });
+
+  block.appendChild(span);
+  block.appendChild(input);
+  block.appendChild(btn);
+}
+
 
   // ==== フロント用 保存・復元 ====  
   function getFrontKey() {
@@ -1234,3 +1280,4 @@
 
 </body>
 </html>
+
