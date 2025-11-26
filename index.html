@@ -207,13 +207,19 @@
       color: var(--text-muted);
     }
 
+    /* 2列（マーク＋入力）の標準行 */
     .inline-3 {
       display: grid;
-      grid-template-columns: 22px 1fr auto; /* ← 3列目を削除ボタン用に追加 */
+      grid-template-columns: 22px 1fr;
       column-gap: 6px;
       row-gap: 4px;
       align-items: center;
       margin-bottom: 4px;
+    }
+
+    /* 3列（マーク＋入力＋削除ボタン）の行 */
+    .inline-3.has-delete {
+      grid-template-columns: 22px 1fr auto;
     }
 
     .inline-3 span.prefix {
@@ -331,12 +337,12 @@
       padding: 2px 4px;
       line-height: 1;
     }
-    
+
     .btn-icon-delete:hover {
       color: #ef4444;
       transform: translateY(-1px);
     }
-    
+
     .btn-icon-delete:active {
       transform: translateY(0);
     }
@@ -515,10 +521,18 @@
         <button type="button" class="btn-secondary" onclick="addBackPlan()">＋ 行を追加</button>
 
         <div class="section-title">■ 気づき・振り返り（学び・改善点など）</div>
-        <div class="inline-3" id="back-ref-block">
-          <span class="prefix">・</span><input type="text" id="back-ref1" class="back-ref-input">
-          <span class="prefix">・</span><input type="text" id="back-ref2" class="back-ref-input">
-          <span class="prefix">・</span><input type="text" id="back-ref3" class="back-ref-input">
+        <div class="inline-3 has-delete" id="back-ref-block">
+          <span class="prefix">・</span>
+          <input type="text" id="back-ref1" class="back-ref-input">
+          <button type="button" class="btn-icon-delete" style="visibility:hidden">🗑</button>
+
+          <span class="prefix">・</span>
+          <input type="text" id="back-ref2" class="back-ref-input">
+          <button type="button" class="btn-icon-delete" style="visibility:hidden">🗑</button>
+
+          <span class="prefix">・</span>
+          <input type="text" id="back-ref3" class="back-ref-input">
+          <button type="button" class="btn-icon-delete" style="visibility:hidden">🗑</button>
         </div>
         <button type="button" class="btn-secondary" onclick="addBackRef()">＋ 行を追加</button>
 
@@ -659,18 +673,18 @@
     inputs.forEach(input => {
       // ベース行（id が指定されているもの）は残す
       if (baseInputIds.indexOf(input.id) !== -1) return;
-  
+
       const span = input.previousElementSibling;
       if (span && span.classList.contains("prefix")) {
         span.remove();
       }
-  
+
       // 右側にある🗑ボタンも消す
       const button = input.nextElementSibling;
       if (button && button.classList.contains("btn-icon-delete")) {
         button.remove();
       }
-  
+
       input.remove();
     });
   }
@@ -819,35 +833,34 @@
   }
 
   function addBackRef(value = "") {
-  const block = document.getElementById("back-ref-block");
-  if (!block) return;
+    const block = document.getElementById("back-ref-block");
+    if (!block) return;
 
-  const span = document.createElement("span");
-  span.className = "prefix";
-  span.textContent = "・";
+    const span = document.createElement("span");
+    span.className = "prefix";
+    span.textContent = "・";
 
-  const input = document.createElement("input");
-  input.type = "text";
-  input.className = "back-ref-input";
-  input.value = value;
-  input.addEventListener("change", saveBackForm);
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "back-ref-input";
+    input.value = value;
+    input.addEventListener("change", saveBackForm);
 
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "btn-icon-delete";
-  btn.textContent = "🗑";
-  btn.addEventListener("click", () => {
-    span.remove();
-    input.remove();
-    btn.remove();
-    saveBackForm();
-  });
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn-icon-delete";
+    btn.textContent = "🗑";
+    btn.addEventListener("click", () => {
+      span.remove();
+      input.remove();
+      btn.remove();
+      saveBackForm();
+    });
 
-  block.appendChild(span);
-  block.appendChild(input);
-  block.appendChild(btn);
-}
-
+    block.appendChild(span);
+    block.appendChild(input);
+    block.appendChild(btn);
+  }
 
   // ==== フロント用 保存・復元 ====  
   function getFrontKey() {
@@ -1049,7 +1062,7 @@
     }
   }
 
-  // フロント用テキスト生成（MTG店舗ブロックは削除）
+  // フロント用テキスト生成
   function buildFrontText() {
     const lines = [];
 
@@ -1276,8 +1289,7 @@
       console.error("タブ状態の復元に失敗しました", e);
     }
   });
-</script>
+  </script>
 
 </body>
 </html>
-
